@@ -1,3 +1,4 @@
+import pdb
 import bpy
 from bpy.app.handlers import persistent
 from bpy.props import IntProperty, FloatProperty
@@ -46,6 +47,50 @@ class GATSettings(bpy.types.PropertyGroup):
 # ====================== OPERATORS ======================
 
 # WEIGHT PAINTING
+
+class SimpleTestAnimation(bpy.types.Operator):
+    """Creates simple animations for weight painting testing purposes"""
+    bl_idname = "anim.simple_test_animation"
+    bl_label = "Simple Test Animation"
+
+    @classmethod
+    def poll(cls, context):
+        return context.active_object is not None
+
+    def execute(self, context):
+        ba = bpy.data.actions.new("TestAnimation")
+        context.active_object.animation_data_create()
+        context.active_object.animation_data.action = ba
+
+        frame = 1
+        context.scene.frame_set(frame)
+        #TODO add support for objects...
+        #bpy.ops.object.rotation_clear()
+        bpy.ops.pose.rot_clear()
+        bpy.ops.anim.keyframe_insert_menu()
+
+        frame = self.animate(context, frame, [True, False, False])
+        frame = self.animate(context, frame, [False, False, True])
+        frame = self.animate(context, frame, [False, True, False])
+
+        return {'FINISHED'}
+
+    def animate(self, context, frame, axis = [False, False, False]):
+        for i in [1, -1]:
+            print(i)
+            frame += 10
+            context.scene.frame_set(frame)
+            bpy.ops.transform.rotate(value = (i * 45), constraint_axis = axis, constraint_orientation = 'LOCAL')
+            bpy.ops.anim.keyframe_insert_menu()
+
+            frame += 10
+            context.scene.frame_set(frame)
+            #bpy.ops.object.rotation_clear()
+            bpy.ops.pose.rot_clear()
+            bpy.ops.anim.keyframe_insert_menu()
+            print("It ends?")
+        return frame
+
 
 class ModalOperator(bpy.types.Operator):
     """Move an object with the mouse, example"""
@@ -366,7 +411,7 @@ class GameAnimationToolboxPanel(GATPanel, bpy.types.Panel):
 
         layout.separator()
 
-        #Root retargeting
+        # Root retargeting
         col = layout.split().column(align = False)
         col.prop(scene.gat_settings, "use_root_retarget")
         col2 = col.split().column(align = False)
@@ -375,7 +420,8 @@ class GameAnimationToolboxPanel(GATPanel, bpy.types.Panel):
         else:
             col2.enabled = False
             #TODO add and call operator that will empty performer root when not used
-        col2.prop_search(scene, "performers_root", performer.data, "bones", text = "Performers Root")
+        if performer:
+            col2.prop_search(scene, "performers_root", performer.data, "bones", text = "Performers Root")
 
         layout.separator()
 
@@ -390,17 +436,15 @@ class GameAnimationToolboxPanel(GATPanel, bpy.types.Panel):
 
         layout.separator()
 
+        # Actions Management
         col = layout.split().column(align = True)
         row = col.row(align = True)
         row.label("Manage actions export:")
-#        sub = row.row()
-#        sub.alignment = 'RIGHT'
-#        sub.label("Mark for Export")
+        #TODO Not sure if it will work ok if actions = []
         for action in bpy.data.actions:
             row = col.row(align = True)
             row2 = row.row(align = True)
             row2.scale_x = 1.4
-            #op = bpy.ops.scene.toggle_export_action('EXEC_DEFAULT', action = action)
             if _is_exported_action(action.name):
                 op = row2.operator("scene.unexport_action", "", icon = "FILE_TICK")
                 op.action_name = action.name
@@ -420,6 +464,7 @@ class GameAnimationToolboxPanel(GATPanel, bpy.types.Panel):
 # ====================== REGISTER ======================
 
 def register():
+    bpy.utils.register_class(SimpleTestAnimation)
     bpy.utils.register_class(ModalOperator)
 
     bpy.utils.register_class(CreateBakedAction)
@@ -463,12 +508,10 @@ def unregister():
     bpy.utils.unregister_class(CreateBakedAction)
 
     bpy.utils.unregister_class(ModalOperator)
+    bpy.utils.unregister_class(SimpleTestAnimation)
 
 
 if __name__ == "__main__":
     register()
 
     # TEST CALL
-    #print(str(bpy.context.scene['exported_actions']))
-    for a in bpy.context.scene.exported_actions:
-        print(a.values())
