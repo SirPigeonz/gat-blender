@@ -92,10 +92,10 @@ class SimpleTestAnimation(bpy.types.Operator):
         return frame
 
 
-class ModalOperator(bpy.types.Operator):
-    """Move an object with the mouse, example"""
-    bl_idname = "object.modal_operator"
-    bl_label = "Simple Modal Operator"
+class TweakWeights(bpy.types.Operator):
+    """Tweak weights in real time (output is normalized)"""
+    bl_idname = "object.tweak_weight"
+    bl_label = "Tweak Weights"
 
     first_mouse_x = IntProperty()
     first_value = FloatProperty()
@@ -465,7 +465,7 @@ class GameAnimationToolboxPanel(GATPanel, bpy.types.Panel):
 
 def register():
     bpy.utils.register_class(SimpleTestAnimation)
-    bpy.utils.register_class(ModalOperator)
+    bpy.utils.register_class(TweakWeights)
 
     bpy.utils.register_class(CreateBakedAction)
     bpy.utils.register_class(SyncActionsStrips)
@@ -507,7 +507,7 @@ def unregister():
     bpy.utils.unregister_class(SyncActionsStrips)
     bpy.utils.unregister_class(CreateBakedAction)
 
-    bpy.utils.unregister_class(ModalOperator)
+    bpy.utils.unregister_class(TweakWeights)
     bpy.utils.unregister_class(SimpleTestAnimation)
 
 
