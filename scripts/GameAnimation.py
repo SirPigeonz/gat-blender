@@ -52,12 +52,18 @@ class SimpleTestAnimation(bpy.types.Operator):
     """Creates simple animations for weight painting testing purposes"""
     bl_idname = "anim.simple_test_animation"
     bl_label = "Simple Test Animation"
+    bl_options = {'PRESET', 'REGISTER', 'UNDO'}
+
+    angle = IntProperty(name = "Angle", default = 45)
+    #TODO implement proper frame preservation for faster workflow
+    original_frame = IntProperty(options = {'HIDDEN'})
 
     @classmethod
     def poll(cls, context):
         return context.active_object is not None
 
     def execute(self, context):
+        #TODO Implement proper overwriting TestAnimation action
         ba = bpy.data.actions.new("TestAnimation")
         context.active_object.animation_data_create()
         context.active_object.animation_data.action = ba
@@ -72,7 +78,6 @@ class SimpleTestAnimation(bpy.types.Operator):
         frame = self.animate(context, frame, [True, False, False])
         frame = self.animate(context, frame, [False, False, True])
         frame = self.animate(context, frame, [False, True, False])
-
         return {'FINISHED'}
 
     def animate(self, context, frame, axis = [False, False, False]):
@@ -80,7 +85,7 @@ class SimpleTestAnimation(bpy.types.Operator):
             print(i)
             frame += 10
             context.scene.frame_set(frame)
-            bpy.ops.transform.rotate(value = (i * 45), constraint_axis = axis, constraint_orientation = 'LOCAL')
+            bpy.ops.transform.rotate(value = (i * self.angle), constraint_axis = axis, constraint_orientation = 'LOCAL')
             bpy.ops.anim.keyframe_insert_menu()
 
             frame += 10
