@@ -46,6 +46,30 @@ class GATSettings(bpy.types.PropertyGroup):
 
 # ====================== OPERATORS ======================
 
+# POSE MODE
+
+class ClearBonesLocks(bpy.types.Operator):
+    bl_idname = "pose.clear_bones_locks"
+    bl_label = "Clear Bones Locks"
+    bl_description = "Clears all transformation locks on selected bones"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        if context.mode == 'POSE':
+            return True
+        else:
+            return False
+
+    def execute(self, context):
+        for bone in context.selected_pose_bones:
+            bone.lock_location = [False, False, False]
+            bone.lock_rotation = [False, False, False]
+            bone.lock_rotation_w = False
+            bone.lock_scale = [False, False, False]
+        return {"FINISHED"}
+
+
 # WEIGHT PAINTING
 
 class SimpleTestAnimation(bpy.types.Operator):
@@ -389,13 +413,16 @@ class GATPanel:
 
 class GameAnimationToolboxPanel(GATPanel, bpy.types.Panel):
     """Set of tools for Animator working with Games and Real Time."""
-    bl_label = "Games Animation Toolbox (GAT)"
+    bl_label = "Animation Transfer (GAT)"
     bl_context = "objectmode"
 
     def draw(self, context):
         layout = self.layout
         scene = context.scene
         performer = scene.performer_armature
+
+        #TODO If armatures are already Binded, when Performer or Puppet are changed or cleared,
+        #     first currently binded Armatures should be unbinded.
 
         # Set Performer and Puppet armatures
         split = layout.split()
@@ -469,6 +496,8 @@ class GameAnimationToolboxPanel(GATPanel, bpy.types.Panel):
 # ====================== REGISTER ======================
 
 def register():
+    bpy.utils.register_class(ClearBonesLocks)
+
     bpy.utils.register_class(SimpleTestAnimation)
     bpy.utils.register_class(TweakWeights)
 
@@ -515,6 +544,7 @@ def unregister():
     bpy.utils.unregister_class(TweakWeights)
     bpy.utils.unregister_class(SimpleTestAnimation)
 
+    bpy.utils.unregister_class(ClearBonesLocks)
 
 if __name__ == "__main__":
     register()
