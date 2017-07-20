@@ -1,8 +1,8 @@
-## GAT-blender
+# Game Art Toolbag (GAT) for Blender
 
 Some usefull scripts for Blender. Will be updated to full Addon in the future.
 
-# Current features (early ALPHA stage):
+## Current features (early ALPHA stage):
 1. Animation Transfer ("Binding" skeletons)
 	* Bones with same name can inherit transformations
 	* Ability to map root bone of one armature to origin of of other aramture (removes extra root bone from export)
