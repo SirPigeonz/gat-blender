@@ -4,9 +4,9 @@ Some useful scripts for Blender. Will be updated to full Add-on in the future.
 
 ## Current features (early ALPHA stage):
 1. Animation Transfer ("Binding" skeletons)
-	* Set of tools designed to help separating rigs designed for pure animation from the ones designed for real time and in-engine use.
-	* Bones with same name can inherit transformations
-	* Ability to map root bone of one armature to origin of other armature (removes extra root bone from export)
+	* Set of tools to help separating rigs designed mainly for animation from the ones designed for real time and in-engine use.
+	* Bones with matching name can inherit transformations
+	* Ability to map root bone of one armature to origin of another armature (removes extra root bone from export)
 1. Simple manager of all available Actions
 	* Simplifies and speedups managing and exporting huge sets of actions
 	* Actions can be marked for Recording (Baking) and Export
