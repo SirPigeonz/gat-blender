@@ -43,8 +43,25 @@ class ExportedActions(bpy.types.PropertyGroup):
 class GATSettings(bpy.types.PropertyGroup):
     use_root_retarget = bpy.props.BoolProperty(name = "Use root retargeting", description = "Retarget performer root bone to puppet object itself (used to eliminate additional root bone in some engines)", default = False)
 
-
 # ====================== OPERATORS ======================
+
+# EXPORT
+
+class ExportAnimationsFbx(bpy.types.Operator):
+    bl_idname = "export_scene.animations_fbx"
+    bl_label = "Export Animations to FBX"
+    bl_description = "Export Animations from active objects NLA tracks to multiple FBX files."
+    bl_options = {'REGISTER'}
+
+    @classmethod
+    def poll(cls, context):
+        #TODO
+        return True
+
+    def execute(self, context):
+        #TODO
+        pass
+        return {"FINISHED"}
 
 # POSE MODE
 
@@ -520,8 +537,12 @@ def register():
     bpy.utils.register_class(UnexportAction)
     bpy.utils.register_class(PushExportAction)
 
+    bpy.utils.register_class(ExportAnimationsFbx)
+
 
 def unregister():
+    bpy.utils.unregister_class(ExportAnimationsFbx)
+
     bpy.utils.unregister_class(ExportAction)
     bpy.utils.unregister_class(UnexportAction)
     bpy.utils.unregister_class(PushExportAction)
